@@ -6,16 +6,16 @@ import tensorflow as tf
 
 labels_train =[]
 
-for i in range(78,216):
+for i in range(0,1127):
 
-	filename="C_astroimp"+str(i)+".jpg"
+	filename="astro"+str(i)+".jpg"
 	print(filename)
 	img = cv2.imread(filename)
 	#img=cv2.resize(img,(256,64), interpolation= cv2.INTER_LINEAR)
 	#img = img.astype(np.float32)
 	#img /= 255.
 	float_arr=[]
-	for m in range(0, 256):
+	for m in range(0,256):
 		for n in range(0, 256):
 			RGB=img[m,n]
 			float_val=float(RGB[0])/255.0

@@ -7,7 +7,7 @@ def ExtractAlphanumeric(InputString):
     return "".join([ch for ch in InputString if ch in (ascii_letters + digits)])
 
 
-common_words=["from","the","with","and","artist","impression","artists","how","art","our","are","what","could","may","news","around","image","most","mullum","like","images","stock"]
+common_words=["from","the","with","and","artist","impression","artists","how","art","our","are","what","could","may","news","around","image","most","mullum","like","images","stock","find","finds","ever","shared","you","some","this","found","that","its","into","sees"]
 def commonword(inputstr):
 	for cw in common_words:
 		if inputstr==cw:
@@ -15,7 +15,7 @@ def commonword(inputstr):
 	return False
 
 Lines=[]
-with open('alternatetxt.txt', 'r', encoding='utf-8') as f:
+with open('alternatetxt2.txt', 'r', encoding='utf-8') as f:
 	Lines=f.readlines()
 print(len(Lines))
 KeyWords=[]
@@ -55,10 +55,7 @@ f.close()
 print("Number of dictionary entries with more than four entries ",format(i))
 j=0
 for line in Lines:
-	if j>215:
-		break
-	if j>=78:
-		index_list=np.zeros(62)
+		index_list=np.zeros(140)
 		keywords=line.split(' ',-1)
 		for keyword in keywords:
 			keyword=ExtractAlphanumeric(keyword).lower()
@@ -66,6 +63,6 @@ for line in Lines:
 				index_list[mydict[keyword]]=1.0
 		#print(index_list)
 		input_train.append(index_list)
-	j=j+1
+		j=j+1
 print(len(input_train))
 np.save("input_train", input_train)

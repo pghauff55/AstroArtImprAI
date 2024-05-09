@@ -41,11 +41,12 @@ def make_generator_model():
     model.add(tf.keras.layers.Dense(196608,activation='tanh'))
 
     return model
+    
 
-def eval_model(index):
+def eval_model(index,count):
     input_x=np.array(inputs_train[index])
     print(input_x.shape)
-    input_x=tf.reshape(input_x,shape=(1,62))
+    input_x=tf.reshape(input_x,shape=(1,140))
     pred=model.predict(input_x)
     line=[]
     separator=" "
@@ -68,9 +69,8 @@ def eval_model(index):
         img2*=255.
         img2=img2.astype(np.uint8)
         img2=img2.reshape(256,256,3)
-        cv2.imshow(title,img)
-        cv2.waitKey(50000)
-        cv2.destroyAllWindows()
+        cv2.imwrite("./images/Astro_"+str(count)+".jpg",img)
+
         return True
     return False 
 
@@ -98,18 +98,19 @@ print(len(labels_train))
 
 
 def make_model():
-	inputs = tf.keras.Input(shape=(62,))
-	dense = tf.keras.layers.Dense(128,activation="softmax")
-	x = dense(inputs)
-	x = tf.keras.layers.Dense(256)(x)
-	x = tf.keras.layers.Dense(384)(x)
+	inputs = tf.keras.Input(shape=(140,))
+	x = tf.keras.layers.Embedding(input_dim=2, output_dim=70, input_length=140)(inputs)
+	x = tf.keras.layers.Flatten()(x)
+	x = tf.keras.layers.Dense(512)(x)
+	x = tf.keras.layers.Dense(1024)(x)
 
-	outputs = tf.keras.layers.Dense(196608,activation="relu")(x)
+	outputs = tf.keras.layers.Dense(256*256*3,activation="sigmoid")(x)
 	model = tf.keras.Model(inputs=inputs, outputs=outputs)
 	return model
 
 
 model=make_model()
+
 model.compile(
     loss=tf.keras.losses.Poisson(),
     optimizer=tf.keras.optimizers.SGD(),
@@ -117,15 +118,13 @@ model.compile(
 )
 
 
-
-
 #(inputs_train,labels_train)=shuffle(inputs_train,labels_train,5*128000)
 
 
-inputs_train_orig=np.array(inputs_train)
-labels_train_orig=np.array(labels_train)
+inputs_train_orig=np.array(inputs_train[0:300])
+labels_train_orig=np.array(labels_train[0:300])
 
-
+#model=tf.keras.models.load_model("./model.keras")
 
 
 f=open('keywords.txt', 'r', encoding='utf-8')
@@ -135,10 +134,12 @@ N=len(inputs_train_orig)
 print(N)
 K=128000
 counter=1
-C=2
-while counter<1000:
+C=20
+while counter<10000:
     print("##########################"+repr(counter)+"#############################")
+    
     (inputs_train,labels_train)=shuffle(inputs_train_orig,labels_train_orig,3*N)
+ 
     hist=model.fit(inputs_train, labels_train, epochs=6)
     index=31
 
@@ -146,8 +147,8 @@ while counter<1000:
     
 
     if counter%C==0:
-        while eval_model(index)==False:
-           if(index<=138):
+        while eval_model(index,counter)==False:
+           if(index<=140):
                 index=index+1
            else:
                 break

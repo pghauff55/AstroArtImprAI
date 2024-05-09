@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 
-def resize_image(img, size=(256,256)):
+def resize_image(img, size=(64,64)):
 
 	h, w = img.shape[:2]
 	c = img.shape[2] if len(img.shape)>2 else 1
@@ -31,18 +31,30 @@ def resize_image(img, size=(256,256)):
 
 	return cv2.resize(mask, size, interpolation)
 
+f=open('alternatetxt.txt', 'r', encoding='utf-8')
+
+lines=f.readlines()
+f.close()
+
+f=open('alternatetxt3.txt', 'w', encoding='utf-8')
+
 
 i=0
-for filename in os.listdir("./"):
+for index in range(0,1399):
+	filename="astroimp"+format(index)+".jpg"
 	print(filename)
-	if filename.endswith(".jpg"):
-		img = cv2.imread(filename)
-		if img is None:
-			h=0
-			w=0
-		else:
-			h, w = img.shape[:2]
-		if h>50 and w>50:
-			squared_image=resize_image(img)
-			cv2.imwrite("C_"+filename,squared_image)
+	img = cv2.imread(filename)
+	if img is None:
+		h=0
+		w=0
+	else:
+		h, w = img.shape[:2]
+	if h>50 and w>50:
+		squared_image=resize_image(img)
+		filename="astro64_"+format(i)+".jpg"
+		cv2.imwrite(filename,squared_image)
+		f.write(lines[i])
 		i=i+1
+f.close()
+
+print(i)
